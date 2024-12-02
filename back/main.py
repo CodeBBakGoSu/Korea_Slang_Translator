@@ -5,6 +5,7 @@ import sqlite3
 from fastapi.middleware.cors import CORSMiddleware
 from rank_bm25 import BM25Okapi
 import logging
+from konlpy.tag import Hannanum  # 형태소 분석기 임포트 (Hannanum 사용)
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -26,12 +27,16 @@ model = BartForConditionalGeneration.from_pretrained(MODEL_DIR, local_files_only
 # SQLite 데이터베이스 연결 설정
 DB_PATH = "/Users/hong-gihyeon/Desktop/Data_Slang/Back/word_info.db"
 
+# 형태소 분석기 초기화 (Hannanum 사용)
+hannanum = Hannanum()
+
 def find_transformed_words(input_text: str, result_text: str) -> list:
     """
     입력 문장과 결과 문장을 비교하여 변환된 단어를 찾습니다.
     """
-    input_words = set(input_text.split())
-    result_words = set(result_text.split())
+    # 형태소 분석기를 이용하여 텍스트를 분리
+    input_words = set(hannanum.morphs(input_text))
+    result_words = set(hannanum.morphs(result_text))
     transformed_words = list(input_words - result_words)  # 결과 문장에 없는 단어
     return transformed_words
 
@@ -151,4 +156,3 @@ def translate_and_analyze(request: TranslationRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-# uvicorn main:app --reload
