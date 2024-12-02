@@ -11,7 +11,7 @@ const ConverterForm = ({ onConvert }) => {
   return (
     <form className="converter-form" onSubmit={handleSubmit}>
       <textarea
-        placeholder="번역하고 싶은 문장을 입력하시오"
+        placeholder="번역하고 싶은 문장을 입력하시오"
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
       />
