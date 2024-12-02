@@ -4,6 +4,7 @@ from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
 import sqlite3
 from fastapi.middleware.cors import CORSMiddleware
 from rank_bm25 import BM25Okapi
+import logging
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -34,24 +35,39 @@ def find_transformed_words(input_text: str, result_text: str) -> list:
     transformed_words = list(input_words - result_words)  # 결과 문장에 없는 단어
     return transformed_words
 
+import logging
+
+# 로깅 설정: DEBUG 이상 수준으로 로그 출력
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("uvicorn")
+
 def bm25_match_candidates(transformed_words, slang_dictionary):
-    """
-    BM25를 사용하여 변환된 단어와 데이터베이스의 은어 목록을 비교하고,
-    가장 유사한 단어를 반환합니다.
-    """
     slang_words = list(slang_dictionary.keys())
     bm25 = BM25Okapi([word.split() for word in slang_words])  # 은어 단어를 토큰화하여 BM25에 입력
 
     results = []
     for word in transformed_words:
-        scores = bm25.get_scores(word.split())
+        print(f"Searching for: {word}")  # 로그 대신 print로 확인
+        logger.info(f"Searching for: {word}")  # 검색하는 단어 로그 출력
+        scores = bm25.get_scores(word.split())  # 변환된 단어의 유사도 점수 계산
         max_index = scores.argmax()  # 가장 높은 점수의 단어 인덱스
-        if scores[max_index] > 0:  # 유사도가 0보다 큰 경우
+        print(f"Scores: {scores}")  # 점수 확인
+        logger.info(f"Scores: {scores}")  # 점수 로그 출력
+        
+        if scores[max_index] > 0:  # 유사도가 0보다 큰 경우에만 추가
+            matched_slang = slang_words[max_index]
+            meaning = slang_dictionary[matched_slang]
+            bm25_score = scores[max_index]
+            
+            # 결과 로그 출력
+            print(f"Matched Slang: {matched_slang}, Meaning: {meaning}, BM25 Score: {bm25_score}")  # 결과 확인
+            logger.info(f"Matched Slang: {matched_slang}, Meaning: {meaning}, BM25 Score: {bm25_score}")
+            
             results.append({
                 "original_word": word,
-                "matched_slang": slang_words[max_index],
-                "meaning": slang_dictionary[slang_words[max_index]],
-                "bm25_score": scores[max_index]
+                "matched_slang": matched_slang,
+                "meaning": meaning,
+                "bm25_score": bm25_score
             })
 
     return results
