@@ -12,27 +12,27 @@
 - **Frontend**: React, React Router
 - **Styling**: CSS
 - **Backend**: FastAPI
-- **Model**: [hongggggggggggg/korea-slang-translator-kobert](https://huggingface.co/hongggggggggggg/korea-slang-translator-kobert)  
-  - KoBERT를 기반으로 파인튜닝하여 한국어 신조어 번역에 최적화.
+- **Model**: [hongggggggggggg/korea-slang-translator-kobart](https://huggingface.co/hongggggggggggg/korea-slang-translator-kobart)  
+  - KoBART를 기반으로 파인튜닝하여 한국어 신조어 번역에 최적화.
 
 ---
 
 ## ⚙️ 데이터 처리 과정
 1. **입력**: 사용자가 입력한 텍스트를 JSON 형태로 백엔드로 전송.
 2. **문단 분리**: 문단을 개별 문장으로 나눔.
-3. **모델 적용**: 분리된 문장을 파인튜닝된 KoBERT 모델에 입력.
+3. **모델 적용**: 분리된 문장을 파인튜닝된 KoBART 모델에 입력.
 4. **형태소 변환**: 형태소 변환기를 통해 입력 문장과 번역 결과 비교.
 5. **BM25 검색**: 변환된 문장을 신조어 DB에서 검색하여 의미를 매칭.
 
 ---
 
-## 🐾 실행 예시
-- 번역 전/후 비교 스크린샷 첨부.
-- 직관적인 UI와 번역 결과 화면.
-
----
-
 ## 📷 실행 화면
+![시작 페이지](/readme/main.png)
+- **메인 페이지**
+
+
+![실행 결과](/readme/output1.png)
+- **실행 결과**
 
 ---
 
@@ -52,7 +52,7 @@
 ### 문제 2: BM25 적용 후에도 검색 성능 부족
 - **원인**: 데이터 부족 및 문맥 이해 한계.
 - **대안 검토**:  
-  1. Seq2Seq 모델이나 BERT 활용 검토.
+  1. Seq2Seq 모델이나 BaRT 활용 검토.
   2. 학습 데이터 부족으로 형태소 추출기를 통해 단어를 분리하여 비교.  
      예) "롤하고 싶다" → "롤", "하고", "싶다"
 
