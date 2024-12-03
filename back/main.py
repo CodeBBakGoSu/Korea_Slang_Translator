@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 # 모델 로드
-MODEL_NAME = "hongggggggggggg/korea-slang-translator-kobert"
+MODEL_NAME = "hongggggggggggg/korea-slang-translator-kobart"
 MODEL_DIR = "/Users/hong-gihyeon/.cache/huggingface/hub/models--hongggggggggggg--korea-slang-translator-kobert/snapshots/cca99825468668b21a8d6de2c86a664ec1b4627a"
 tokenizer = PreTrainedTokenizerFast.from_pretrained("hyunwoongko/kobart")
 model = BartForConditionalGeneration.from_pretrained(MODEL_DIR, local_files_only=True)
